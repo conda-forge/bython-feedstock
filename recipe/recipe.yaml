@@ -1,0 +1,47 @@
+context:
+  name: bython
+  version: "0.8"
+
+package:
+  name: ${{ name }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/b/${{ name }}/${{ name }}-${{ version }}.tar.gz
+  sha256: 49c73aa53f17e0180f6789cc434227f24ea5c1590cc67ce0ac8d799f506f3972
+
+build:
+  number: 1
+  noarch: python
+  script: python -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - pip
+    - setuptools
+  run:
+    - python >=${{ python_min }}
+    # bython contains unix-style scripts that are not supported on Windows
+    - __unix
+
+tests:
+  - python:
+      imports:
+        - bython
+      pip_check: true
+      python_version: ${{ python_min }}.*
+  - script:
+      - bython --version
+      - by2py --version
+      - py2by --version
+
+about:
+  homepage: https://github.com/mathialo/bython
+  summary: Python with braces
+  license: MIT
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - pavelzw
